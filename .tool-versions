@@ -1,0 +1,3 @@
+helm 4.2.4
+kubectl 1.36.4
+skaffold 2.24.0
