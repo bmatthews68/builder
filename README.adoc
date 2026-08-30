@@ -1,1 +1,37 @@
-= Skaffold
+= Builder
+
+To build and publish the image Docker Hub run the following command:
+
+[,console]
+----
+make
+----
+
+The `build` target in the `Makefile` executes does all the work:
+
+.Makefile
+[,console]
+----
+include::Makefile[]
+----
+
+The `Dockerile` below installs https://sdkman.io/[SDKMAN!] and https://asdf-vm.com/[asdf Version Manager] the uses them to install the necessary tools:
+
+.Dockerfile
+----
+include::Dockerfile[]
+----
+
+*SDKMAN!* is used to install Java (https://adoptium.net/en-GB[Eclipse Temurin]), https://maven.apache.org/[Maven] and https://gradle.org/[Gradle]:
+
+.skdmanrc
+----
+include::.sdkmanrc[]
+----
+
+*asdf Version Manager* is used to install https://www.devspace.sh/[DevSpace], https://helm.sh/[Helm], https://kubernetes.io/docs/reference/kubectl/[Kubectl], https://skaffold.dev/[Skaffold] and https://tilt.dev/[Tilt]:
+
+.tool-versions
+----
+include::.tool-versions[]
+----
