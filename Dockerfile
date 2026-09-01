@@ -6,9 +6,10 @@ ARG ASDF_VER=v0.20.0
 
 WORKDIR /work
 
-SHELL ["/bin/bash", "-c"]
+COPY .curlrc /root/
 
-ADD .curlrc .bash_profile /root/
+ENV SDKMAN_DIR="/root/.sdkman"
+ENV PATH="/root/.asdf/shims:/root/.sdkman/candidates/java/current/bin:/root/.sdkman/candidates/maven/current/bin:/root/.sdkman/candidates/gradle/current/bin${PATH}"
 
 RUN --mount=type=ssh \
     apt-get update; \
@@ -16,16 +17,17 @@ RUN --mount=type=ssh \
     mkdir -p -m 0700 ~/.ssh; \
     ssh-keyscan github.com >> ~/.ssh/known_hosts; \
     curl -s "https://get.sdkman.io" | bash; \
-    curl -sSLo- https://github.com/asdf-vm/asdf/releases/download/${ASDF_VER}/asdf-${ASDF_VER}-${TARGETOS}-${TARGETARCH}.tar.gz | tar -xz -C /usr/local/bin; \
-    echo "export PATH=\${ASDF_DATA_DIR:-\$HOME/.asdf}/shims:\$PATH" >> /root/.bashrc
+    curl -sSLo- https://github.com/asdf-vm/asdf/releases/download/${ASDF_VER}/asdf-${ASDF_VER}-${TARGETOS}-${TARGETARCH}.tar.gz | tar -xz -C /usr/local/bin
 
-ADD .sdkmanrc .tool-versions /work/
+COPY .sdkmanrc .tool-versions /work/
+
+SHELL ["bash", "-c"]
 
 RUN --mount=type=ssh \
-    bash -c "source /root/.sdkman/bin/sdkman-init.sh && sdk env install"; \
+    source /root/.sdkman/bin/sdkman-init.sh; \
+    sdk env install; \
     asdf plugin add tilt https://github.com/virtualstaticvoid/asdf-tilt.git; \
     cut -d' ' -f1 .tool-versions | xargs -I {} asdf plugin add {}; \
     asdf install
 
-ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["bash"]
+CMD ["sleep", "infinity"]
